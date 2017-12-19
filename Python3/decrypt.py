@@ -2,6 +2,8 @@ def decrypt(initial, key):
   """ Use : decrypt("COWUUDNYXGCJFCQVW", "keyword")
   => 'MESSAGEINCAPITALS'
   """
+  initial = initial.upper()
+  key = key.upper()
   lkey = len(key)
   list1 = [ord(i) for i in key]
   list2 = [ord(i) for i in initial]
