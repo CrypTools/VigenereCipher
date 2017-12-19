@@ -3,7 +3,7 @@ def encrypt(initial, key):
   => 'COWUUDNYXGCJFCQVW'
   """
   initial = initial.upper()
-  key = key.upper()
+  key = key.lower()
   lkey = len(key)
   list1 = [ord(i) for i in key]
   list2 = [ord(i) for i in initial]
