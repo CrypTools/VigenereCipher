@@ -58,8 +58,6 @@ int keywordFix(char* string) {
 	char* j = string;
 	while (*j != '\0') {
 		*i = *j++;
-		// Any non-alphabet characters will be overwritten by the next alphabet character.
-		// lower case letters switches to capital. Keywords look cooler when all capped
 		if ( ( *i >= 'a' ) && ( *i <= 'z' ) ) {
 			*i = toupper(*i);
 			i++;
@@ -75,9 +73,6 @@ int keywordFix(char* string) {
 	}
 }
 
-// If just letters, *cipherText = [(*text-'A') + (*keyword-'A')] % 26 + 'A'   <---- We use this one.
-// If all possible characters, range is ASCII CODE 32 ~ 126
-// In that case, *cipherText = [(*text-' ') + (*keyword-'A')] % 95 + ' '
 void vCipher(char* string, char* keyword, int action) {
 
 	int i = 0;
@@ -86,7 +81,6 @@ void vCipher(char* string, char* keyword, int action) {
 	char* key = keyword;
 	if ( action == ENCODE) {
 		while (*str != '\n' && *str != '\0') {
-			//*str = ( (*str-' ')+(keyword[i%len]-'A') )%95 + ' ';
 			if ( (*str >= 'a') && (*str <= 'z') ) {
 				*str = ( (*str-'a')+(keyword[i%len]-'A') )%26 + 'a';
 				i++;
