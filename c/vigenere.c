@@ -1,119 +1,69 @@
+// CrypTools - GitHub
+// Tuesday, 14 August 2018
+// Vignerere Cipher to encrypt text
+
+/*****
+Compile:
+$ make
+Use:
+$ ./vigenere KEYARRAY < file.txt
+Note that the KEYARRAY should only be composed of alphabetical lowercase and uppercase letters.
+*****/
+
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
-#define MAX_STRING_SIZE 500
-#define MAX_SIZE 20
-#define DO_NOTHING 2
-#define ENCODE 1
-#define DECODE 0
-#define EXIT_SUCCESS 0
-#define EXIT_FAILURE 1
+#define MINCAP 65
+#define MAXCAP 90
 
-void vCipher(char* string, char* keyword, int action);
-int keywordFix(char* string);
+#define MINLOW 97
+#define MAXLOW 122
 
-int main(int argc, char* argv[]) {
+void encode (int shiftNumber, char letter);
+int getFirstLetter (char letter);
 
-	char process[MAX_SIZE];
-	char keyword[MAX_SIZE];
-	int i;
-	int action = DO_NOTHING;
-	int retval = EXIT_SUCCESS;
-
-	printf("Would you like to decode or encode text?\n");
-	scanf("%s", &process);
-	for (i = 0 ; process[i] ; i++) {
-		process[i] = tolower(process[i]);
-	}
-	if (strcmp(process, "encode") == 0) {
-		action = ENCODE;
-	} else if (strcmp(process, "decode") == 0) {
-		action = DECODE;
-	} else {
-		printf("Improper process.\nExiting...\n");
-		retval =  EXIT_FAILURE;
-	}
-	if (retval == EXIT_SUCCESS) {
-		printf("What is the keyword?\n");
-		scanf("%s", &keyword);
-		if ( keywordFix(keyword) ) {
-			char text[MAX_STRING_SIZE];
-			printf("Keyword read is %s\n", keyword);
-			printf("What string would you like me to %s? The maximum size is %d characters.\n", process, MAX_STRING_SIZE);
-			while (fgets(text, MAX_STRING_SIZE, stdin) != NULL);
-			vCipher(text, keyword, action);
-			fputs(text, stdout);
-		} else {
-			printf("Improper Keyword.\nExiting...\n");
-			retval = EXIT_FAILURE;
-		}
-	}
-
-	return retval;
+// Takes an int and a file containing text to encrypt
+int main (int argc, char *argv[]) {
+    int shift = 0;
+    int c = 0;
+    // set key
+    char *key = argv[1];
+    int keyLength = strlen(key);
+    int keyIndex = 0;
+    int currentLetter = 0;
+    while ((c = getchar()) != EOF) {
+        currentLetter = key[keyIndex % keyLength];
+        shift = (currentLetter - getFirstLetter(currentLetter));
+        keyIndex++;
+        encode(shift, c);
+    }
+    printf("\n");
+    return EXIT_SUCCESS;
 }
 
-int keywordFix(char* string) {
-	char* i = string;
-	char* j = string;
-	while (*j != '\0') {
-		*i = *j++;
-		if ( ( *i >= 'a' ) && ( *i <= 'z' ) ) {
-			*i = toupper(*i);
-			i++;
-		} else if ( ( *i >= 'A' ) && ( *i <= 'Z' ) ) {
-			i++;
-		}
-	}
-	*i = '\0';
-	if (string[0] != '\0') {
-		return 1;
-	} else {
-		return 0;
-	}
+/* takes a character and increments it by shift */
+void encode (int shift, char letter) {
+    int numAscii = letter;
+    int firstLetter = getFirstLetter(letter);
+    if ((firstLetter == 65) || (firstLetter == 97)) {
+        numAscii -= (firstLetter - shift);
+        numAscii = (numAscii % 26);
+        numAscii += firstLetter;
+        putchar(numAscii);
+    }
 }
 
-void vCipher(char* string, char* keyword, int action) {
-
-	int i = 0;
-	int len = strlen(keyword);
-	char* str = string;
-	char* key = keyword;
-	if ( action == ENCODE) {
-		while (*str != '\n' && *str != '\0') {
-			if ( (*str >= 'a') && (*str <= 'z') ) {
-				*str = ( (*str-'a')+(keyword[i%len]-'A') )%26 + 'a';
-				i++;
-			} else if ( (*str >= 'A') && (*str <= 'Z') ) {
-				*str = ( (*str-'A')+(keyword[i%len]-'A') )%26 + 'A';
-				i++;
-			}
-			str++;
-		}
-	} else if (action == DECODE) {
-		while (*str != '\n' && *str != '\0') {
-			if ( (*str >= 'a') && (*str <= 'z') ) {
-				if ( *str-tolower(keyword[i%len]) >= 0 ) {
-					*str = (*str-tolower(keyword[i%len]))+'a';
-				} else {
-					*str = 'z' + (*str-tolower(keyword[i%len])) + 1;
-				}
-				i++;
-			} else if ( (*str >= 'A') && (*str <= 'Z') ) {
-				if ( *str-keyword[i%len] >= 0 ) {
-					*str = (*str-keyword[i%len])+'A';
-				} else {
-					*str = 'Z' + (*str-keyword[i%len]) + 1;
-				}
-				i++;
-			}
-			str++;
-
-		}
-	}
-
+int getFirstLetter (char letter) {
+    int numAscii = letter;
+    int firstLetter;
+    if (numAscii >= MINCAP && numAscii <= MAXCAP) {
+        firstLetter = MINCAP;
+    } else if (numAscii >= MINLOW && numAscii <= MAXLOW) {
+        firstLetter = MINLOW;
+    } else {
+        putchar(letter);
+        firstLetter = 1;
+    }
+    return firstLetter;
 }
-
-
-
-
