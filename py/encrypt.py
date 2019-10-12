@@ -20,8 +20,6 @@ def encrypt(initial, key):
 
 	key = [ord(char) - 65 for char in key.lower()]
 
-
-
 	for i in range(len(msg)):
 		if type(msg[i]) == type(''): output += msg[i]
 		else:
