@@ -12,7 +12,7 @@ String.prototype.decrypt = function(key) {
 
 	let msg = [];
 	let output = '';
-	for (char of this) {
+	for (let char of this) {
 		let code = char.charCodeAt(0)
 		if (between(code, 65, 90)) {msg.push([code - 65, 0])}
 		else if (between(code, 97, 122)) {msg.push([code - 97, 1])}
